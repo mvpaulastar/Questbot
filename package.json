@@ -1,0 +1,14 @@
+{
+  "name": "questbot",
+  "version": "1.0.0",
+  "description": "A bot that catalogs quests for DnD games",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Traelina and Achille",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^13.1.0"
+  }
+}

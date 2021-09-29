@@ -1,4 +1,5 @@
 const { Client, Intents, DiscordAPIError } = require('discord.js'); //Connects to Client
+const Discord = require('discord.js');
 const client = new Client({intents:[Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
 const prefix = '?'; //Prefix the bot will use to execute commands
 
@@ -16,4 +17,16 @@ for(const file of commandFiles){ //loops through the command file to find the co
     client.commands.set(command.name, command);
 }
 
+client.on('messageCreate', async message => {
+    if( !message.content.startsWith(prefix) || message.author.bot ) return;
+
+    const args = message.content.slice(prefix.length).split(/ +/);
+    const command = args.shift().toLowerCase();
+
+    if( command == 'ping' ){
+        client.commands.get('ping').execute(message,args);
+    }else if (command == 'youtube' ){
+
+    }
+});
 client.login('ODkyNjE5MDMwMDg5ODU5MDk0.YVPiQA.mDGSk_Qfoa8TEJYBQt3CwKof-7Y'); //Make sure this is the last line of this file!

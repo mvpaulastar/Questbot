@@ -30,4 +30,4 @@ client.on('messageCreate', async message => {
     }
 
 });
-client.login('ODkyNjE5MDMwMDg5ODU5MDk0.YVPiQA.mDGSk_Qfoa8TEJYBQt3CwKof-7Y'); //Make sure this is the last line of this file!
+client.login('token'); //Make sure this is the last line of this file!

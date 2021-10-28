@@ -2,7 +2,7 @@ const { MessageEmbed } = require('discord.js');
 module.exports = {
     name: 'help',
     description: "Bot returns help info in an embed",
-    execute(message ){
+    execute(message, args, Quests, sequelize, Characters, Users ){
         let embed = new MessageEmbed()	
         .setColor('#0099ff')
         .setTitle('Help Commands')

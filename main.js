@@ -1,7 +1,8 @@
 const fs = require('fs'); 
 const { token } = require('./config.json');
 const Sequelize = require('sequelize');
-const { Client, Intents, Collection } = require('discord.js'); 
+const { Client, Intents, Collection, ReactionUserManager } = require('discord.js'); 
+const { Users, Quests, sequelize, Characters } = require('./dbObjects.js');
 const client = new Client({intents:[Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
 let prefix = '?'; //Prefix the bot will use to execute commands
 
@@ -15,51 +16,28 @@ for(const file of commandFiles){ //loops through the command file to load comman
     client.commands.set(command.name, command);
 }
 
-//Initialize the db 
-const sequelize = new Sequelize('database', 'user', 'password', {
-    host: 'localhost',
-    dialect: 'sqlite',
-    logging: false,
-    storage: 'database.sqlite',
-});
-
-//Data model
-const Quests = sequelize.define('quests',{
-    name:{
-        type: Sequelize.STRING,
-        unique: true,
-    },
-    reward:{
-        type: Sequelize.STRING,
-        defaultValue: '0',
-        allowNull:false,
-    },
-    description: Sequelize.TEXT,
-    username: Sequelize.STRING,
-});
-
 client.once('ready', () => { 
-    Quests.sync();
     console.log('Log Hunter is ready to quest!');
 });
 
 client.on('messageCreate', async message => {
     if( !message.content.startsWith(prefix) || message.author.bot ) return;
-
     const args = message.content.slice(prefix.length).split(/ +/);
     const command = args.shift().toLowerCase();
-
-    if( command == 'ping' ){ //simple ping command
-        client.commands.get('ping').execute(message);
-    }else if( command == 'help'){ //sends the user the command list
-        client.commands.get('help').execute(message);
-    }else if( command == 'prefix'){ //changes the prefix of the bot
-        prefix = args[0];
-        message.reply(`Prefix changed to ${args[0]}`);
-    }else if( command == 'quest' ){ //quest commands and args
-        client.commands.get('quest').execute( message, args[0], Quests);
-    }else if( command == 'grabrand' ){
-        client.commands.get('grabRand').execute(message, Quests, sequelize);
+    
+    if(!client.commands.has(command))return;
+    try{
+        client.commands.get(command).execute(
+            message,
+            args,
+            Quests,
+            sequelize,
+            Characters,
+            Users,
+        );
+    }catch(error){
+        console.error(error);
+        message.reply("There was an error trying to execute the command");
     }
 });
 

@@ -3,7 +3,8 @@ module.exports = {
     name: 'quest',
     description: "quest commands",
 
-    async execute(message, commandName, Quests ){ //Parses args and runs quest args accordingly
+    async execute( message, args, Quests, sequelize ){ //Parses args and runs quest args accordingly
+        let commandName = args[0];
         if (commandName === 'add') { //add quest
             message.reply('Enter a quest name!');
             const questName = await getReply(message, 60000);
@@ -11,6 +12,8 @@ module.exports = {
             const pay = await getReply(message,60000);
             message.reply('Enter the quest description!');
             const des = await getReply(message, 60000);
+            message.reply('What character is posting this?');
+            const character = await getReply(message, 60000);
 
             const embed = new MessageEmbed() //Embed to be sent
             .setColor('#0099ff')
@@ -19,7 +22,8 @@ module.exports = {
             .setThumbnail('https://i.imgur.com/fWt7Mqf.jpg')
             .addFields(
                 { name: 'Reward', value: `${pay}`, inline: true },
-                { name: 'Poster', value: `${message.author.username}`, inline: true },
+                { name: 'Poster', value: `${character}`, inline: true },
+                { name: 'User', value: `${message.author.username}`, inline: true },
             )
             .setTimestamp();
     
@@ -28,6 +32,7 @@ module.exports = {
                     name: questName,
                     reward: pay,
                     description: des,
+                    character: character,
                     username: message.author.username,
                 });
                 return message.reply({embeds: [embed]});
@@ -46,7 +51,7 @@ module.exports = {
             // equivalent to: UPDATE tags (descrption) values (?) WHERE name = ?;
             const affectedRows = await Quests.update({ description: des }, { where: { name: questName } });
             if (affectedRows > 0) {
-                return message.reply(`Tag ${questName} was edited.`);
+                return message.reply(`Quest: ${questName} was edited.`);
             }
             return message.reply(`Could not find a quest with name ${questName}.`);
         } else if (commandName === 'info') { //Grab quest info
@@ -63,7 +68,8 @@ module.exports = {
                 .setThumbnail('https://i.imgur.com/fWt7Mqf.jpg')
                 .addFields(
                 { name: 'Reward', value: `${quest.reward}`, inline: true },
-                { name: 'Poster', value: `${quest.username}`, inline: true },
+                { name: 'Poster', value: `${quest.character}`, inline: true },
+                { name: 'User', value: `${quest.username}`, inline: true },
                 )
                 .setTimestamp();
                 return message.reply({embeds: [embed]});

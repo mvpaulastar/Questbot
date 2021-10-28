@@ -1,9 +1,10 @@
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, MessageAttachment } = require('discord.js');
 
 module.exports = {
-    name: 'grabRand',
+    name: 'grabrand',
     description: "grabs and returns a random quest",
-    async execute(message, Quests, sequelize){
+    async execute(message, args, Quests, sequelize, Characters, Users ){
+        const file = new MessageAttachment('./assets/OrcQuestMan.png');
         const quest = await Quests.findOne({ order: sequelize.random() }); //rand quest
 
         if(quest){
@@ -11,13 +12,13 @@ module.exports = {
                 .setColor('#0099ff')
                 .setTitle(quest.name)
                 .setDescription(quest.description)
-                .setThumbnail('https://i.imgur.com/fWt7Mqf.jpg')
+                .setThumbnail('attachment://OrcQuestMan.png')
                 .addFields(
                     { name: 'Reward', value: `${quest.reward}`, inline: true },
                     { name: 'Poster', value: `${quest.username}`, inline: true },
                 )
                 .setTimestamp();
-            return message.reply({embeds: [embed]});
+            return message.reply({embeds: [embed], files:[file]});
         }
         return message.reply(`Could not find a quest`);
     }

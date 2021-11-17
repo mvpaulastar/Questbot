@@ -1,8 +1,6 @@
 const fs = require('fs'); 
 const { token } = require('./config.json');
-const Sequelize = require('sequelize');
 const { Client, Intents, Collection, ReactionUserManager } = require('discord.js'); 
-const { Users, Quests, sequelize, Characters } = require('./dbObjects.js');
 const client = new Client({intents:[Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
 let prefix = '?'; //Prefix the bot will use to execute commands
 

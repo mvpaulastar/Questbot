@@ -9,7 +9,12 @@ Utilizes:
 - Sqlite3: 5.0.2
     
 If you want to run the bot make sure you have all of those dependencies and the Node.js runtime!
-Before starting up the bot make sure you execute
+To setup the bot:
+- Create a config.json file in the same folder as your main.js file and paste the following code into it ```{
+    "token": "YOUR DISCORD BOT TOKEN HERE. CREATE A BOT APP AT discord.com/developers"
+}```
+
+- Before starting up the bot make sure you execute
     ```node dbInit.js -f```
 in the command line to sync the databases. You only need to do this before you launch the bot for the first time!
 

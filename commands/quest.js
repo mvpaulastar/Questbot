@@ -1,9 +1,10 @@
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, MessageAttachment } = require('discord.js');
+const {Quests} = require('../dbObjects.js');
 module.exports = {
     name: 'quest',
     description: "quest commands",
 
-    async execute( message, args, Quests, sequelize ){ //Parses args and runs quest args accordingly
+    async execute( message, args ){ //Parses args and runs quest args accordingly
         let commandName = args[0];
         if (commandName === 'add') { //add quest
             message.reply('Enter a quest name!');
@@ -15,11 +16,12 @@ module.exports = {
             message.reply('What character is posting this?');
             const character = await getReply(message, 60000);
 
+            const file = new MessageAttachment('./assets/Exclamation_Mark.png');
             const embed = new MessageEmbed() //Embed to be sent
             .setColor('#0099ff')
             .setTitle(questName)
             .setDescription(des)
-            .setThumbnail('https://i.imgur.com/fWt7Mqf.jpg')
+            .setThumbnail('attachment://Exclamation_Mark.png')
             .addFields(
                 { name: 'Reward', value: `${pay}`, inline: true },
                 { name: 'Poster', value: `${character}`, inline: true },
@@ -35,7 +37,7 @@ module.exports = {
                     character: character,
                     username: message.author.username,
                 });
-                return message.reply({embeds: [embed]});
+                return message.reply({embeds: [embed], files:[file]});
             } catch (error) {
                 if (error.name === 'SequelizeUniqueConstraintError') {
                     return message.reply('That quest already exists.');
@@ -61,18 +63,19 @@ module.exports = {
             // equivalent to: SELECT * FROM tags WHERE name = 'questName' LIMIT 1;
             const quest = await Quests.findOne({ where: { name: questName } });
             if (quest) {
+                const file = new MessageAttachment('./assets/Exclamation_Mark.png');
                 const embed = new MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle(questName)
                 .setDescription(quest.description)
-                .setThumbnail('https://i.imgur.com/fWt7Mqf.jpg')
+                .setThumbnail('attachment://Exclamation_Mark.png')
                 .addFields(
                 { name: 'Reward', value: `${quest.reward}`, inline: true },
                 { name: 'Poster', value: `${quest.character}`, inline: true },
                 { name: 'User', value: `${quest.username}`, inline: true },
                 )
                 .setTimestamp();
-                return message.reply({embeds: [embed]});
+                return message.reply({embeds: [embed], files:[file]});
             }
             return message.reply(`Could not find quest: ${questName}`);
         } else if (commandName === 'all') { //List all quests
@@ -86,6 +89,8 @@ module.exports = {
             const rowCount = await Quests.destroy({ where: { name: questName } });
             if (!rowCount) return message.reply('That quest did not exist.');
             return message.reply('Quest removed.');
+        } else {
+            return message.reply('No arguments sent or wrong arguments! Do ?help quest for a list of arguments!');
         }
     }//end execute
 }

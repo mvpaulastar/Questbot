@@ -1,7 +1,7 @@
 module.exports = {
     name: 'ping',
     description: "Bot returns pong",
-    execute(message, args, Quests, sequelize, Characters, Users ){
+    execute(message, args ){
         message.channel.send('Pong!');
     }
 }

@@ -27,14 +27,7 @@ client.on('messageCreate', async message => {
     
     if(!client.commands.has(command))return;
     try{
-        client.commands.get(command).execute(
-            message,
-            args,
-            Quests,
-            sequelize,
-            Characters,
-            Users,
-        );
+        client.commands.get(command).execute( message, args );
     }catch(error){
         console.error(error);
         message.reply("There was an error trying to execute the command");

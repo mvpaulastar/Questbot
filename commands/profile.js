@@ -1,9 +1,10 @@
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, MessageAttachment } = require('discord.js');
+const { Characters, Users } = require('../dbObjects.js');
 module.exports = {
     name: 'profile',
     description: "create a user profile",
 
-    async execute( message, args, Quests, sequelize, Characters, Users ){ 
+    async execute( message, args ){ 
         //if user doesn't exist, create
         const user = await Users.findOne({ where: { user_id: message.author.id } });
         if(!user){const newUser = await Users.create({user_id: message.author.id, name: message.author.username});}
@@ -19,11 +20,12 @@ module.exports = {
             message.reply('Enter your character\'s level!');
             const lvl = await getReply(message, 60000);
 
+            const file = new MessageAttachment('./assets/Exclamation_Mark.png');
             const embed = new MessageEmbed() //Embed to be sent
             .setColor('#0099ff')
             .setTitle(charName)
             .setDescription(charclass)
-            .setThumbnail('https://i.imgur.com/fWt7Mqf.jpg')
+            .setThumbnail('attachment://Exclamation_Mark.png')
             .addFields(
                 { name: 'Class', value: `${charclass}`, inline: true },
                 { name: 'Subclass', value: `${subclass}`, inline: true },
@@ -40,7 +42,7 @@ module.exports = {
                     subclass: subclass,
                     level: lvl,
                 });
-                return message.reply({embeds: [embed]});
+                return message.reply({embeds: [embed], files:[file]});
             } catch (error) {
                 if (error.name === 'SequelizeUniqueConstraintError') {
                     return message.reply('That char already exists.');
@@ -51,14 +53,14 @@ module.exports = {
             message.reply('What character are you looking for?');
             const charName = await getReply(message, 60000);
     
-            // equivalent to: SELECT * FROM tags WHERE name = 'questName' LIMIT 1;
             const character = await Characters.findOne({ where: { name: charName, user_id: message.author.id } });
             if (character) {
+                const file = new MessageAttachment('./assets/Exclamation_Mark.png');
                 const embed = new MessageEmbed()
                 .setColor('#0099ff')
                 .setTitle(character.name)
                 .setDescription(character.class)
-                .setThumbnail('https://i.imgur.com/fWt7Mqf.jpg')
+                .setThumbnail('attachment://Exclamation_Mark.png')
                 .addFields(
                     { name: 'Class', value: `${character.class}`, inline: true },
                     { name: 'Subclass', value: `${character.subclass}`, inline: true },
@@ -66,7 +68,7 @@ module.exports = {
                     { name: 'User', value: `${message.author.username}`, inline: true },
                 )
                 .setTimestamp();
-                return message.reply({embeds: [embed]});
+                return message.reply({embeds: [embed], files:[file]});
             }
             return message.reply(`Could not find character: ${charName}`);
         }else if (commandName === 'all') { //List all chars associated with the user
@@ -74,12 +76,13 @@ module.exports = {
             const charString = charList.map(t => t.name).join(', ') || 'No characters set.';
             return message.reply(`List of characters: ${charString}`);
         } else if (commandName === 'rem') { //Remove a quest
-            // equivalent to: DELETE from tags WHERE name = ?;
             message.reply('What character are you looking to remove?');
             const charName = await getReply(message, 60000);
             const rowCount = await Characters.destroy({ where: { name: charName, user_id: message.author.id } });
             if (!rowCount) return message.reply('That character did not exist.');
             return message.reply('Character removed.');
+        }else{
+            return message.reply('No arguments sent or wrong arguments! Do ?help profile for a list of arguments!');
         }
     }
 }

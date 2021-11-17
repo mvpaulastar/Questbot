@@ -1,10 +1,11 @@
 const { MessageEmbed, MessageAttachment } = require('discord.js');
+const {Quests, sequelize} = require('../dbObjects.js');
 
 module.exports = {
     name: 'grabrand',
     description: "grabs and returns a random quest",
-    async execute(message, args, Quests, sequelize, Characters, Users ){
-        const file = new MessageAttachment('./assets/OrcQuestMan.png');
+    async execute(message, args ){
+        const file = new MessageAttachment('./assets/Exclamation_Mark.png');
         const quest = await Quests.findOne({ order: sequelize.random() }); //rand quest
 
         if(quest){
@@ -12,7 +13,7 @@ module.exports = {
                 .setColor('#0099ff')
                 .setTitle(quest.name)
                 .setDescription(quest.description)
-                .setThumbnail('attachment://OrcQuestMan.png')
+                .setThumbnail('attachment://Exclamation_Mark.png')
                 .addFields(
                     { name: 'Reward', value: `${quest.reward}`, inline: true },
                     { name: 'Poster', value: `${quest.username}`, inline: true },

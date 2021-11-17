@@ -12,3 +12,6 @@ If you want to run the bot make sure you have all of those dependencies and the 
 Before starting up the bot make sure you execute
     ```node dbInit.js -f```
 in the command line to sync the databases. You only need to do this before you launch the bot for the first time!
+
+Coded by Paula Sirisumpund
+Images created by Scott Crowley

@@ -1,3 +1,4 @@
+/* Still under construction. This is a very rudimentary version of the roll command.
 import Math
 module.exports = {
     name: 'roll',
@@ -13,3 +14,4 @@ module.exports = {
       message.channel.send('Result is ${result}!');
     }
 }
+*/
